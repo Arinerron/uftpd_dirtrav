@@ -8,8 +8,7 @@
 # This exploit uses a directory traversal vulnerability and escapes uftpd's
 # crappy implementation of a chroot jail. It does not require authentication.
 # It  looks for common webserver paths on the FTP server and attempts to place a
-# PHP backdoor to pop a shell with. It also tries to make a crontab to get code
-# execution, and it tries overwriting some rc files too.
+# PHP backdoor to pop a shell with.
 
 
 #################
