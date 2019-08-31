@@ -13,7 +13,7 @@ class MetasploitModule < Msf::Exploit::Remote
       'Name'           => 'uftpd 2.6-2.10 Directory Traversal (Chroot Escape)',
       'Description'    => %q{
           This module exploits a directory traversal vulnerability in versions 2.6 to
-        2.10 of uftpd server. The vulnerability is within the "compose_abspath" function
+        2.10 of uftpd server. The vulnerability is within the "compose_path" function
         within the "src/common.c" file.
 
         Every FTP command that I have tested is vulnerable because they use the same
