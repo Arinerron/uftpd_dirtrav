@@ -3,7 +3,7 @@
 
 # Author: Aaron Esau (Arinerron) <security@aaronesau.com>
 # Writeup: https://aaronesau.com/blog/posts/6
-# Product: uftpd <=2.10
+# Product: uftpd 2.6-2.10
 
 # This exploit uses a directory traversal vulnerability and escapes uftpd's
 # crappy implementation of a chroot jail. It does not require authentication.
