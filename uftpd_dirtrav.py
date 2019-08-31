@@ -316,7 +316,7 @@ if __name__ == '__main__':
     if not 'uftpd' in banner:
         elog('A uftpd server does not appear to be running at %s:%d' %(RHOST, RPORT))
 
-    banner_match = re.search('.*uftpd \((1|2\.[0-7]).*\).*', banner)
+    banner_match = re.search('.*uftpd \((2\.(10|[6-9])).*\).*', banner)
 
     if not banner_match:
         wlog('The target uftpd server does not appear to be running the right version')
